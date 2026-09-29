@@ -1,18 +1,29 @@
-[ja](./README.ja.md)
+[en](./README.md)
 
 # TinyFormantSynth.WASM
 
-Convert tiny-formant-synth to WASM and try synthesizing speech on the browser.
+tiny-formant-synthをWASM化してブラウザ上で音声合成してみる。
 
-# DEMO
+1. [ayutaz/tiny-formant-synth][]を少し改造しライブラリ化する
+2. [emsdk][]でビルドしWASM化する
+3. [index.html][DEMO]で読み込んで実行する
 
-* [DEMO](https://ytyaru.github.io/Shell.TinyFormantSynth.WASM.20260928170731/)
+クロスプラットフォーム化されたので、最近のブラウザならどんなOSでも実行できるはず。
 
-# Features
+[ayutaz/tiny-formant-synth]:https://github.com/ayutaz/tiny-formant-synth
+[emsdk]:https://github.com/emscripten-core/emsdk
 
-* sales point
+# デモ
 
-# Requirement
+* [デモ][DEMO]
+
+[DEMO]:https://ytyaru.github.io/Shell.TinyFormantSynth.WASM.20260928170731/
+
+# 特徴
+
+* セールスポイント
+
+# 開発環境
 
 * <time datetime="20260928165843">20260928165843</time>
 * [Raspbierry Pi](https://ja.wikipedia.org/wiki/Raspberry_Pi) 4 Model B Rev 1.2
@@ -24,35 +35,35 @@ $ uname -a
 
 ```
 
-# Installation
+# インストール
 
 ```sh
-git clone https://github.com/ytyaru/Shell.TinyFormantSynth.WASM.20260928170731Shell.TinyFormantSynth.WASM.20260928170731
+git clone https://github.com/ytyaru/Shell.TinyFormantSynth.WASM.20260928170731
 ```
 
-# Usage
+# 使い方
 
 ```sh
 cd Shell.TinyFormantSynth.WASM.20260928170731/src
 ./run.sh
 ```
 
-# Note
+# 注意
 
-* important point
+* 注意点など
 
-# Author
+# 著者
 
-ytyaru
+　ytyaru
 
 * [![github](http://www.google.com/s2/favicons?domain=github.com)](https://github.com/ytyaru "github")
 * [![hatena](http://www.google.com/s2/favicons?domain=www.hatena.ne.jp)](http://ytyaru.hatenablog.com/ytyaru "hatena")
 * [![twitter](http://www.google.com/s2/favicons?domain=twitter.com)](https://twitter.com/ytyaru1 "twitter")
 * [![mastodon](http://www.google.com/s2/favicons?domain=mstdn.jp)](https://mstdn.jp/web/accounts/233143 "mastdon")
 
-# License
+# ライセンス
 
-This software is CC0 licensed.
+　このソフトウェアはCC0ライセンスである。
 
-[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png "CC0")](http://creativecommons.org/publicdomain/zero/1.0/deed.en)
+[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png "CC0")](http://creativecommons.org/publicdomain/zero/1.0/deed.ja)
 
