@@ -109,7 +109,7 @@ emscripten::val synthesize_to_wav_bytes(std::string text, double target_lufs) {
     if (pcm_data.empty()) {
         pcm_data.resize(4410, 0);
     }
-    /*
+    
     // --- 雑音対策：簡易ローパスフィルター ---
     if (pcm_data.size() > 1) {
         std::vector<int16_t> filtered = pcm_data;
@@ -121,7 +121,7 @@ emscripten::val synthesize_to_wav_bytes(std::string text, double target_lufs) {
         }
         pcm_data = std::move(filtered);
     }
-    */
+
     // --- 本格的な ITU-R BS.1770 準拠 LUFS ラウドネス正規化 ---
     LufsNormalizer::normalize(pcm_data, target_lufs, kSampleRate);
     
@@ -159,9 +159,9 @@ emscripten::val synthesize_to_wav_bytes(std::string text, double target_lufs) {
     append_bytes(&data_size, 4);
     append_bytes(pcm_data.data(), data_size);
 
-    return emscripten::val(emscripten::typed_memory_view(wav_file.size(), wav_file.data()));
-    // ↓不要
-    //return emscripten::val(emscripten::typed_memory_view(wav_file.size(), wav_file.data())).call<emscripten::val>("slice", 0);
+    // メモリ確保
+//    return emscripten::val(emscripten::typed_memory_view(wav_file.size(), wav_file.data()));
+    return emscripten::val(emscripten::typed_memory_view(wav_file.size(), wav_file.data())).call<emscripten::val>("slice", 0);
 }
 
 EMSCRIPTEN_BINDINGS(tiny_formant_synth) {
