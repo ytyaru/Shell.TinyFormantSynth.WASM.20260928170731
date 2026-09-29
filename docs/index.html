@@ -22,12 +22,12 @@
 <body>
     <div class="card">
         <h2>Tiny Formant Synth (Player)</h2>
-        <textarea id="textInput" placeholder="こんにちは。ふぉるまんとごうせいのてすとです。">こんにちは。ふぉるまんとごうせいのてすとです。</textarea>
+        <textarea id="textInput">こんにちは。ふぉるまんとごうせいのてすとです。</textarea>
         
         <div class="setting-row">
             <label for="lufsInput">目標ラウドネス (LUFS):</label>
-            <input type="number" id="lufsInput" value="-10.0" step="0.5" />
-            <span style="color:#666; font-size:12px;">(推奨: -10.0)</span>
+            <input type="number" id="lufsInput" value="-14.0" step="0.5" />
+            <span style="color:#666; font-size:12px;">(推奨放送規格: -14.0 〜 -24.0 LUFS)</span>
         </div>
 
         <div class="btn-group">
@@ -37,7 +37,8 @@
         </div>
         
         <div id="status">ステータス: 待機中</div>
-        <small><ul><li>フォルマント合成（ロボ声・抑揚なし）</li><li>平仮名のみ（片仮名・漢字など無視）</li><li>WASM化（167KB。js:78.2KB）</li></ul>
+
+        <small><ul><li>フォルマント合成（ロボ声・抑揚なし）</li><li>平仮名のみ（片仮名・漢字など無視）</li><li>WASM化（248.2KB = wasm:170KB + js:78.2KB）</li></ul>
         </small>
         <small>
         これ:<a href="https://github.com/ytyaru/Shell.TinyFormantSynth.WASM.20260928170731" target="_blank" rel="noopener noreferrer">ytyaru/Shell.TinyFormantSynth.WASM.20260928170731</a><br>
@@ -50,7 +51,7 @@
         let audioCtx = null;
         let audioBuffer = null;
         let sourceNode = null;
-        let savedWavBytes = null; // 正確なUint8Arrayバッファを保持
+        let savedWavBytes = null;
         
         let startOffset = 0;
         let startTime = 0;
@@ -83,7 +84,7 @@
                     isPlaying = false;
                     isFinished = true;
                     playToggleBtn.innerText = '▶';
-                    synthesizeBtn.disabled = false; // 合成ボタンを有効化
+                    synthesizeBtn.disabled = false;
                     startOffset = 0;
                     statusDiv.innerText = "ステータス: 再生終了";
                 }
@@ -94,22 +95,20 @@
             isPlaying = true;
             isFinished = false;
             playToggleBtn.innerText = '⏸';
-            synthesizeBtn.disabled = true; // 再生中は合成ボタンを無効化
+            synthesizeBtn.disabled = true;
             statusDiv.innerText = "ステータス: 再生中...";
         }
 
-        // 音声合成ボタン
         synthesizeBtn.onclick = async () => {
             try {
                 let Module = await moduleReady;
                 let text = document.getElementById('textInput').value;
-                let targetLufs = parseFloat(document.getElementById('lufsInput').value) || -10.0;
+                let targetLufs = parseFloat(document.getElementById('lufsInput').value) || -14.0;
                 
                 synthesizeBtn.disabled = true;
-                statusDiv.innerText = "ステータス: フォルマント合成中 (LUFS: " + targetLufs + ")...";
+                statusDiv.innerText = "ステータス: フォルマント合成＆LUFS正規化中 (" + targetLufs + " LUFS)...";
 
                 let wavBytes = Module.synthesize_to_wav_bytes(text, targetLufs);
-                // コピーを作成してJS側で安全に保持（サイズ0防止）
                 savedWavBytes = new Uint8Array(wavBytes);
                 let arrayBuffer = savedWavBytes.buffer.slice(savedWavBytes.byteOffset, savedWavBytes.byteOffset + savedWavBytes.byteLength);
 
@@ -123,7 +122,7 @@
                     isFinished = false;
                     playToggleBtn.disabled = false;
                     downloadBtn.disabled = false;
-                    statusDiv.innerText = "ステータス: 合成完了。自動再生します。";
+                    statusDiv.innerText = "ステータス: 合成完了（LUFS対応）。自動再生します。";
                     
                     playAudio(0);
                 }, (err) => {
@@ -136,12 +135,10 @@
             }
         };
 
-        // 再生/一時停止トグルボタン
         playToggleBtn.onclick = () => {
             if (!audioBuffer) return;
 
             if (isPlaying) {
-                // 一時停止
                 startOffset += audioCtx.currentTime - startTime;
                 if (sourceNode) {
                     sourceNode.stop();
@@ -149,10 +146,9 @@
                 }
                 isPlaying = false;
                 playToggleBtn.innerText = '▶';
-                synthesizeBtn.disabled = false; // 一時停止中は合成ボタンを復帰
+                synthesizeBtn.disabled = false;
                 statusDiv.innerText = "ステータス: 一時停止中";
             } else {
-                // 再開 / 最初から
                 if (isFinished) {
                     startOffset = 0;
                     isFinished = false;
@@ -161,7 +157,6 @@
             }
         };
 
-        // ダウンロードボタン（確実にサイズを持つように修正）
         downloadBtn.onclick = () => {
             if (!savedWavBytes || savedWavBytes.length === 0) {
                 statusDiv.innerText = "エラー: ダウンロードする音声データがありません。";
@@ -171,12 +166,12 @@
             let url = URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
-            a.download = 'formant_synth.wav';
+            a.download = 'formant_synth_lufs.wav';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            statusDiv.innerText = "ステータス: WAVファイルをダウンロードしました（サイズ: " + savedWavBytes.length + " bytes）。";
+            statusDiv.innerText = "ステータス: LUFS正規化済みWAVファイルをダウンロードしました。";
         };
     </script>
 </body>
